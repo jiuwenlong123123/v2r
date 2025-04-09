@@ -1,0 +1,32 @@
+name: Update 2.txt Daily
+
+on:
+  schedule:
+
+cron: "0 2 * * *"  # 每天上午10点（UTC时间）
+workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+
+name: Checkout repo
+      uses: actions/checkout@v3
+
+
+name: Download and merge nodes
+      run: |
+        mkdir -p nodes
+        curl -sSL https://raw.githubusercontent.com/jiuwenlong123123/clash/main/2.txt -o nodes/clash.txt
+        curl -sSL https://raw.githubusercontent.com/jiuwenlong123123/v2ray_nodes/main/2.txt -o nodes/v2ray.txt
+        cat nodes/clash.txt nodes/v2ray.txt > 2.txt
+
+
+name: Commit and push changes
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add 2.txt
+        git commit -m "Auto update 2.txt" || echo "No changes to commit"
+        git push
